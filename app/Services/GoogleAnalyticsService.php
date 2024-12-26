@@ -17,7 +17,6 @@ class GoogleAnalyticsService
         ['name' => 'eventName'],
         ['name' => 'customEvent:client_id'],
         ['name' => 'customEvent:username'],
-        ['name' => 'customEvent:ga_session_id'],
     ];
     public const METRICS = [
         ['name' => 'eventCount']
