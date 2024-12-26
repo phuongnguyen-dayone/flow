@@ -39,7 +39,7 @@ class GoogleAnalyticsService
         return new AnalyticsData($client);
     }
 
-    public function getRealtimeEventData(string $clientId, string $eventName = 'login', int $limit = 10)
+    public function getRealtimeEventData(string $clientId, string $eventName = 'login', int $limit = 20)
     {
         $requestBody = $this->prepareRealtimeReportRequest($clientId, $eventName, $limit);
 
@@ -49,7 +49,7 @@ class GoogleAnalyticsService
         );
     }
 
-    public function getEventData(string $clientId, string $eventName = 'login', int $limit = 10)
+    public function getEventData(string $clientId, string $eventName = 'login', int $limit = 20)
     {
         $requestBody = $this->prepareReportRequest($clientId, $eventName, $limit);
 
