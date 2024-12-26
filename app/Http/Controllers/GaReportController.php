@@ -26,6 +26,7 @@ class GaReportController extends Controller
 
             return response()->json([
                 'success' => true,
+                'sdt' => '123123123',
                 'data' => $data,
             ]);
         } catch (\Exception $e) {
@@ -55,6 +56,7 @@ class GaReportController extends Controller
 
             return response()->json([
                 'success' => true,
+                'sdt' => '123123123',
                 'data' => $data,
             ]);
         } catch (\Exception $e) {
