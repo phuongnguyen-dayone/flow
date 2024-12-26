@@ -23,7 +23,7 @@ class GaReportController extends Controller
                     'event_count' => $row['metricValues'][0]['value'],
                 ];
             }
-
+            $gaService->getRealtimeEventData('1000013');
             return response()->json([
                 'success' => true,
                 'sdt' => '123123123',
@@ -53,7 +53,7 @@ class GaReportController extends Controller
                     'event_count' => $row['metricValues'][0]['value'],
                 ];
             }
-
+            $gaService->getEventData('1000013');
             return response()->json([
                 'success' => true,
                 'sdt' => '123123123',
