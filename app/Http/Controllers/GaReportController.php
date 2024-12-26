@@ -13,8 +13,7 @@ class GaReportController extends Controller
         try {
             // Fetch recent Login events filtered by client_id
             $report = $gaService->getRealtimeEventData('1000014');
-            dd($report);
-            // Parse and format the report for display
+            // Parse and format the report for display this should be added
             $data = [];
             foreach ($report->getRows() as $row) {
                 $data[] = [
@@ -42,8 +41,7 @@ class GaReportController extends Controller
         try {
             // Fetch recent Login events filtered by client_id
             $report = $gaService->getEventData('1000014');
-            dd($report);
-            // Parse and format the report for display
+            // Parse and format the report for display oh this is duplicated
             $data = [];
             foreach ($report->getRows() as $row) {
                 $data[] = [

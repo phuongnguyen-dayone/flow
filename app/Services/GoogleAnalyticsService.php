@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Google\Client;
+use Google\Exception;
 use Google\Service\AnalyticsData;
 use Google_Service_AnalyticsData_RunRealtimeReportRequest;
 use Google_Service_AnalyticsData_RunReportRequest;
@@ -17,15 +18,21 @@ class GoogleAnalyticsService
         ['name' => 'customEvent:client_id'],
         ['name' => 'customEvent:username'],
     ];
-    private const METRICS = [
+    public const METRICS = [
         ['name' => 'eventCount']
     ];
 
+    /**
+     * @throws Exception
+     */
     public function __construct()
     {
         $this->analyticsData = $this->initializeAnalyticsClient();
     }
 
+    /**
+     * @throws Exception
+     */
     private function initializeAnalyticsClient(): AnalyticsData
     {
         $keyFilePath = config('services.google.credentials');
@@ -36,10 +43,15 @@ class GoogleAnalyticsService
         $client->addScope(self::API_SCOPE);
 
         $this->propertyId = $propertyId;
+
         return new AnalyticsData($client);
     }
 
-    public function getRealtimeEventData(string $clientId, string $eventName = 'login', int $limit = 10)
+
+    /**
+     * @throws \Google\Service\Exception
+     */
+    public function getRealtimeEventData(string $clientId, string $eventName = 'login', int $limit = 20): AnalyticsData\RunRealtimeReportResponse
     {
         $requestBody = $this->prepareRealtimeReportRequest($clientId, $eventName, $limit);
 
@@ -49,7 +61,10 @@ class GoogleAnalyticsService
         );
     }
 
-    public function getEventData(string $clientId, string $eventName = 'login', int $limit = 10)
+    /**
+     * @throws \Google\Service\Exception
+     */
+    public function getEventData(string $clientId, string $eventName = 'login', int $limit = 20): AnalyticsData\RunReportResponse
     {
         $requestBody = $this->prepareReportRequest($clientId, $eventName, $limit);
 
