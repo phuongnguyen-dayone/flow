@@ -1,0 +1,4 @@
+name: gademo
+recipe: laravel
+config:
+  webroot: ./public/
