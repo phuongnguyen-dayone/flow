@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GaReportResponseResource;
 use App\Services\GoogleAnalyticsService;
 use Illuminate\Http\Request;
 
@@ -12,57 +13,33 @@ class GaReportController extends Controller
     {
         try {
             // Fetch recent Login events filtered by client_id
-            $report = $gaService->getRealtimeEventData('1000014','Login');
-            // Parse and format the report for display
-            $data = [];
-            foreach ($report->getRows() as $row) {
-                $data[] = [
-                    'event_name' => $row['dimensionValues'][0]['value'],
-                    'client_id'  => $row['dimensionValues'][1]['value'],
-                    'username'   => $row['dimensionValues'][2]['value'],
-                    'event_count' => $row['metricValues'][0]['value'],
-                ];
-            }
-            $gaService->getRealtimeEventData('1000013', 'Login');
+            $report = $gaService->getRealtimeEventData('1000014', 'login');
+
             return response()->json([
                 'success' => true,
-                'sdt' => '123123123',
-                'data' => $data,
+                'data' =>  GaReportResponseResource::make($report),
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => json_decode($e->getMessage()),
             ], 500);
         }
-
     }
     public function report(GoogleAnalyticsService $gaService)
     {
         try {
             // Fetch recent Login events filtered by client_id
-            $report = $gaService->getEventData('1000014', 'Login');
+            $report = $gaService->getEventData('1000014', 'login');
 
-            // Parse and format the report for display
-            $data = [];
-            foreach ($report->getRows() as $row) {
-                $data[] = [
-                    'event_name' => $row['dimensionValues'][0]['value'],
-                    'client_id'  => $row['dimensionValues'][1]['value'],
-                    'username'   => $row['dimensionValues'][2]['value'],
-                    'event_count' => $row['metricValues'][0]['value'],
-                ];
-            }
-            $gaService->getEventData('1000013','Login');
             return response()->json([
                 'success' => true,
-                'sdt' => '123123123',
-                'data' => $data,
+                'data' => GaReportResponseResource::make($report),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => json_decode($e->getMessage()),
             ], 500);
         }
 
