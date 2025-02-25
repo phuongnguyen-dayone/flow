@@ -35,7 +35,7 @@ return [
         ],
     ],
     'google' => [
-        'credentials' => env('GOOGLE_APPLICATION_CREDENTIALS'),
+        'credentials' => base_path(env('GOOGLE_APPLICATION_CREDENTIALS')),
         'property_id' => env('GOOGLE_ANALYTICS_PROPERTY_ID'),
     ],
 

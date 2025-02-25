@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Google\Client;
 use Google\Service\AnalyticsData;
+use Google\Service\Exception;
 use Google_Service_AnalyticsData_RunRealtimeReportRequest;
 use Google_Service_AnalyticsData_RunReportRequest;
 
@@ -14,8 +15,6 @@ class GoogleAnalyticsService
     private const API_SCOPE = 'https://www.googleapis.com/auth/analytics.readonly';
     private const DIMENSIONS = [
         ['name' => 'eventName'],
-        ['name' => 'customEvent:client_id'],
-        ['name' => 'customEvent:username'],
     ];
     private const METRICS = [
         ['name' => 'eventCount']
@@ -39,7 +38,10 @@ class GoogleAnalyticsService
         return new AnalyticsData($client);
     }
 
-    public function getRealtimeEventData(string $clientId, string $eventName, int $limit = 10)
+    /**
+     * @throws Exception
+     */
+    public function getRealtimeEventData(string $clientId, string $eventName, int $limit = 10): AnalyticsData\RunRealtimeReportResponse
     {
         $requestBody = $this->prepareRealtimeReportRequest($clientId, $eventName, $limit);
 
@@ -49,7 +51,10 @@ class GoogleAnalyticsService
         );
     }
 
-    public function getEventData(string $clientId, string $eventName, int $limit = 10)
+    /**
+     * @throws Exception
+     */
+    public function getEventData(string $clientId, string $eventName, int $limit = 10): AnalyticsData\RunReportResponse
     {
         $requestBody = $this->prepareReportRequest($clientId, $eventName, $limit);
 
@@ -62,45 +67,59 @@ class GoogleAnalyticsService
     private function prepareReportRequest(string $clientId, string $eventName, int $limit): Google_Service_AnalyticsData_RunReportRequest
     {
         return new Google_Service_AnalyticsData_RunReportRequest([
-            'dimensions' => self::DIMENSIONS,
-            'metrics' => self::METRICS,
+            'dimensions' => [
+                ['name' => 'eventName'],
+                ['name' => 'customEvent:username'],
+            ],
+            'metrics' => [
+                ['name' => 'eventCount'],
+            ],
+            'dateRanges' => [
+                [
+                    'startDate' => '100daysAgo',
+                    'endDate' => 'today'
+                ]
+            ],
+
             'dimensionFilter' => [
-                'andGroup' => [
-                    'filters' => [
-                        [
-                            'fieldName' => 'eventName',
-                            'stringFilter' => ['value' => $eventName],
-                        ],
-                        [
-                            'fieldName' => 'customEvent:client_id',
-                            'stringFilter' => ['value' => $clientId],
-                        ],
-                    ],
-                ],
+                'filter' => [
+                    'fieldName' => 'eventName',
+                    'stringFilter' => [
+                        'value' => $eventName,
+                        'matchType' => 'EXACT'
+                    ]
+                ]
+
             ],
             'limit' => $limit,
+            'returnPropertyQuota' => true
+
         ]);
     }
     private function prepareRealtimeReportRequest(string $clientId, string $eventName, int $limit): Google_Service_AnalyticsData_RunRealtimeReportRequest
     {
         return new Google_Service_AnalyticsData_RunRealtimeReportRequest([
-            'dimensions' => self::DIMENSIONS,
-            'metrics' => self::METRICS,
+            'dimensions' => [
+                ['name' => 'eventName'],
+
+            ],
+            'metrics' => [
+                ['name' => 'eventCount'],
+                ['name' => 'customEvent:playerName'],
+            ],
             'dimensionFilter' => [
-                'andGroup' => [
-                    'filters' => [
-                        [
-                            'fieldName' => 'eventName',
-                            'stringFilter' => ['value' => $eventName],
-                        ],
-                        [
-                            'fieldName' => 'customEvent:client_id',
-                            'stringFilter' => ['value' => $clientId],
-                        ],
-                    ],
-                ],
+                'filter' => [
+                    'fieldName' => 'eventName',
+                    'stringFilter' => [
+                        'value' => $eventName,
+                        'matchType' => 'EXACT'
+                    ]
+                ]
+
             ],
             'limit' => $limit,
+            'returnPropertyQuota' => true
+
         ]);
     }
 }
